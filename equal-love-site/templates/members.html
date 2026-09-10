@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}MEMBER | ＝LOVE{% endblock %}
+{% block content %}
+  <section class="members-hero">
+    <img src="{{ url_for('static', filename='img/equal-love-2026-koi-hajimemashita.webp') }}" alt="白いセーラー衣装を着た＝LOVEの10人の集合写真">
+
+    <div class="members-hero__shade">
+    </div>
+
+    <a class="photo-credit" href="https://equal-love.jp/news/detail/11588" target="_blank" rel="noopener noreferrer">
+      2026.08 NEW ARTIST PHOTO
+      <span>↗</span>
+    </a>
+
+    <div class="members-hero__copy reveal">
+      <p class="eyebrow">MEET THE MEMBERS</p>
+      <h1>
+        <span>10</span>
+        MEMBERS
+      </h1>
+      <p>
+        声も、表情も、個性も違う。
+        <br>
+        10人が集まって、＝LOVEになる。
+      </p>
+    </div>
+  </section>
+
+  <section class="section member-section">
+    <div class="member-intro reveal">
+      <p class="eyebrow">PROFILE</p>
+      <h2>
+        十人十色の
+        <br>
+        “LOVE”を知る。
+      </h2>
+      <p>2026年9月7日時点の公式Xプロフィール写真と、公式サイトで公開されているプロフィール情報を掲載しています。</p>
+    </div>
+
+    <div class="member-grid">
+      {# メンバーの数だけ、プロフィールカードを1人分ずつ繰り返す #}
+      {% for member in members %}
+        <article class="member-card reveal">
+          <div class="member-card__portrait">
+            <img
+              src="{{ url_for('static', filename='img/' + member['image']) }}"
+              alt="{{ member['name'] }}の公式Xプロフィール写真"
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            >
+            <span class="member-card__number">{{ member['number'] }}</span>
+            <a class="member-card__social" href="{{ member['social_url'] }}" target="_blank" rel="noopener noreferrer" aria-label="{{ member['name'] }}の公式Xを見る">
+              <b>X</b>
+              OFFICIAL
+              <span>↗</span>
+            </a>
+          </div>
+
+          <div class="member-card__body">
+            <div class="member-card__name">
+              <p>{{ member['roman'] }}</p>
+              <h2>{{ member['name'] }}</h2>
+            </div>
+
+            <dl class="member-facts">
+              <div>
+                <dt>BIRTHDAY</dt>
+                <dd>{{ member['birthday'] }}</dd>
+              </div>
+              <div>
+                <dt>FROM</dt>
+                <dd>{{ member['from'] }}</dd>
+              </div>
+              <div>
+                <dt>HEIGHT</dt>
+                <dd>{{ member['height'] }}</dd>
+              </div>
+              <div>
+                <dt>BLOOD TYPE</dt>
+                <dd>{{ member['blood'] }}</dd>
+              </div>
+            </dl>
+
+            <p class="member-card__profile">{{ member['profile'] }}</p>
+
+            <div class="member-card__links">
+              <a href="{{ member['url'] }}" target="_blank" rel="noopener noreferrer">
+                公式プロフィール
+                <span>↗</span>
+              </a>
+              <a href="{{ member['social_url'] }}" target="_blank" rel="noopener noreferrer">
+                最新のX投稿
+                <span>↗</span>
+              </a>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+      {# メンバーカードの繰り返しはここまで #}
+    </div>
+  </section>
+{% endblock %}

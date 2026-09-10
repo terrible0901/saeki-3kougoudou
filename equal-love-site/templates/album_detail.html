@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}{{ album['title'] }} {{ album['edition'] }} | REVIEWS{% endblock %}
+{% block content %}
+  <section class="album-detail">
+    <a class="back-link" href="{{ url_for('discography') }}">← DISCOGRAPHY</a>
+
+    <div class="album-detail__grid">
+      <div class="album-detail__visual reveal">
+        <span class="image-number">0{{ album['id'] }}</span>
+        <img src="{{ url_for('static', filename='img/' + album['image']) }}" alt="{{ album['title'] }} {{ album['edition'] }} ジャケット">
+      </div>
+
+      <div class="album-detail__info reveal">
+        <p class="eyebrow">{{ album['category'] }} / {{ album['release_date'] }}</p>
+        <h1>{{ album['title'] }}</h1>
+        <p class="edition">{{ album['edition'] }}</p>
+        <p class="description">{{ album['description'] }}</p>
+
+        <div class="score-panel">
+          <div>
+            <strong>{{ album['average_rating'] or '—' }}</strong>
+            <span>/ 5.0</span>
+          </div>
+
+          <div>
+            <div class="score-stars" aria-label="平均評価 {{ album['average_rating'] or 'なし' }}">
+              {# 1個目から5個目まで、平均評価用の星を繰り返す #}
+              {% for i in range(1, 6) %}
+                <span class="{{ 'is-on' if album['average_rating'] and i <= album['average_rating']|round(0, 'floor') else '' }}">★</span>
+              {% endfor %}
+              {# 平均評価用の星の繰り返しはここまで #}
+            </div>
+            <p>{{ album['review_count'] }}件のレビュー</p>
+          </div>
+        </div>
+
+        <a class="button button--dark" href="#review-form">
+          このCDをレビューする
+          <span>↓</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="review-area" id="review-form">
+    <div class="review-area__heading reveal">
+      <p class="eyebrow">SHARE YOUR LOVE</p>
+      <h2>REVIEW THIS CD</h2>
+      <p>あなたが感じた魅力を、次に聴く人へ。</p>
+    </div>
+
+    <form class="review-form reveal" method="post" action="{{ url_for('add_review', album_id=album['id']) }}">
+      <fieldset class="rating-field">
+        <legend>
+          総合評価
+          <span>必須</span>
+        </legend>
+
+        <div class="star-picker">
+          {# 5点から1点まで、投稿フォーム用の星を1個ずつ作る #}
+          {% for rating in range(5, 0, -1) %}
+            <input type="radio" name="rating" id="star-{{ rating }}" value="{{ rating }}" required>
+            <label for="star-{{ rating }}" title="{{ rating }}点">
+              ★
+              <span class="sr-only">{{ rating }}点</span>
+            </label>
+          {% endfor %}
+          {# 投稿フォーム用の星の繰り返しはここまで #}
+        </div>
+
+        <output class="rating-output" aria-live="polite">星を選んでください</output>
+      </fieldset>
+
+      <div class="form-row">
+        <label>
+          ニックネーム
+          <span>必須</span>
+          <input name="nickname" maxlength="30" autocomplete="nickname" required placeholder="例：イコラブファン">
+        </label>
+
+        <label>
+          レビュータイトル
+          <span>必須</span>
+          <input name="review_title" maxlength="60" required placeholder="心に残る一枚でした">
+        </label>
+      </div>
+
+      <label>
+        感想
+        <span>必須</span>
+        <textarea name="comment" minlength="10" maxlength="800" rows="7" required placeholder="好きな曲、歌詞、ジャケット、ライブ映像など、この作品の魅力を自由に書いてください。"></textarea>
+        <small class="char-count">0 / 800</small>
+      </label>
+
+      <button class="button button--dark submit-button" type="submit">
+        レビューを投稿する
+        <span>→</span>
+      </button>
+    </form>
+  </section>
+
+  <section class="section review-list-section" id="reviews">
+    <div class="section-heading reveal">
+      <div>
+        <p class="eyebrow">FAN VOICES</p>
+        <h2>REVIEWS</h2>
+      </div>
+      <span class="review-count">{{ reviews|length }} VOICES</span>
+    </div>
+
+    {# レビューがある場合は一覧、ない場合は案内を表示する #}
+    {% if reviews %}
+      <div class="review-list">
+        {# 保存されているレビューを新しい順に1件ずつ繰り返す #}
+        {% for review in reviews %}
+          <article class="review-card reveal">
+            <div class="review-card__head">
+              <div class="review-avatar">{{ review['nickname'][0] }}</div>
+
+              <div>
+                <strong>
+                  {{ review['nickname'] }}
+                  {# 初期データだけ「サンプルデータ」と表示する #}
+                  {% if review['is_sample'] %}
+                    <span class="sample-badge">サンプルデータ</span>
+                  {% endif %}
+                  {# サンプル表示の条件分岐はここまで #}
+                </strong>
+                <time>
+                  {{ review['created_at'][:10].replace('-', '.') }}
+                  {# 更新日時があるレビューだけ「編集済み」と表示する #}
+                  {% if review['updated_at'] %}
+                    · 編集済み
+                  {% endif %}
+                  {# 編集済み表示の条件分岐はここまで #}
+                </time>
+              </div>
+
+              <div class="review-stars" aria-label="5点中{{ review['rating'] }}点">
+                {{ '★' * review['rating'] }}
+                <span>{{ '★' * (5-review['rating']) }}</span>
+              </div>
+            </div>
+
+            <h3>{{ review['review_title'] }}</h3>
+            <p>{{ review['comment'] }}</p>
+
+            {# 利用者が投稿したレビューだけ編集・削除を許可する #}
+            {% if not review['is_sample'] %}
+              <div class="review-actions">
+                <a href="{{ url_for('edit_review', review_id=review['id']) }}">編集</a>
+                <form method="post" action="{{ url_for('delete_review', review_id=review['id']) }}" data-confirm="このレビューを削除しますか？">
+                  <button type="submit">削除</button>
+                </form>
+              </div>
+            {% endif %}
+            {# 編集・削除ボタンの条件分岐はここまで #}
+          </article>
+        {% endfor %}
+        {# レビュー一覧の繰り返しはここまで #}
+      </div>
+    {% else %}
+      <div class="empty-state reveal">
+        <span>♡</span>
+        <h3>まだレビューがありません</h3>
+        <p>この作品への最初の「好き」を残してみませんか。</p>
+        <a href="#review-form">レビューを書く →</a>
+      </div>
+    {% endif %}
+    {# レビュー有無の条件分岐はここまで #}
+  </section>
+{% endblock %}

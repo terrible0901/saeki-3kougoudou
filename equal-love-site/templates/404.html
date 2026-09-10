@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}ページが見つかりません | ＝LOVE{% endblock %}
+{% block content %}
+  <section class="not-found">
+    <span>404</span>
+    <h1>ページが見つかりません</h1>
+    <p>リンクが変更されたか、作品が削除された可能性があります。</p>
+    <a class="button button--dark" href="{{ url_for('index') }}">
+      HOMEへ戻る
+      <b>→</b>
+    </a>
+  </section>
+{% endblock %}

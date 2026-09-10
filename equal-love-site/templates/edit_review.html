@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}レビューを編集 | ＝LOVE{% endblock %}
+{% block content %}
+  <header class="page-hero">
+    <p class="eyebrow">EDIT YOUR VOICE</p>
+    <h1>EDIT REVIEW</h1>
+    <p>{{ album['title'] }} / {{ album['edition'] }}</p>
+  </header>
+
+  <section class="review-area review-area--edit">
+    <form class="review-form" method="post">
+      <fieldset class="rating-field">
+        <legend>
+          総合評価
+          <span>必須</span>
+        </legend>
+        <div class="star-picker">
+          {# 5点から1点まで、評価用の星を1個ずつ作る #}
+          {% for rating in range(5, 0, -1) %}
+            <input type="radio" name="rating" id="star-{{ rating }}" value="{{ rating }}" {{ 'checked' if review['rating'] == rating }} required>
+            <label for="star-{{ rating }}">
+              ★
+              <span class="sr-only">{{ rating }}点</span>
+            </label>
+          {% endfor %}
+          {# 星の繰り返しはここまで #}
+        </div>
+        <output class="rating-output">{{ review['rating'] }} / 5</output>
+      </fieldset>
+
+      <div class="form-row">
+        <label>
+          ニックネーム
+          <span>必須</span>
+          <input name="nickname" maxlength="30" required value="{{ review['nickname'] }}">
+        </label>
+        <label>
+          レビュータイトル
+          <span>必須</span>
+          <input name="review_title" maxlength="60" required value="{{ review['review_title'] }}">
+        </label>
+      </div>
+
+      <label>
+        感想
+        <span>必須</span>
+        <textarea name="comment" minlength="10" maxlength="800" rows="7" required>{{ review['comment'] }}</textarea>
+        <small class="char-count">{{ review['comment']|length }} / 800</small>
+      </label>
+
+      <div class="form-actions">
+        <button class="button button--dark submit-button" type="submit">
+          変更を保存
+          <span>→</span>
+        </button>
+        <a href="{{ url_for('album_detail', album_id=album['id']) }}#reviews">キャンセル</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

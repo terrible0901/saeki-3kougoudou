@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}＝LOVE | HOME{% endblock %}
+{% block content %}
+  <section class="hero">
+    <img src="{{ url_for('static', filename='img/equal-love-2026-koi-hajimemashita.webp') }}" alt="白いセーラー衣装を着た＝LOVEの10人の集合写真">
+
+    <div class="hero-shade">
+    </div>
+
+    <a class="photo-credit" href="https://equal-love.jp/news/detail/11588" target="_blank" rel="noopener noreferrer">
+      2026.08 NEW ARTIST PHOTO
+      <span>↗</span>
+    </a>
+
+    <div class="hero-copy reveal">
+      <p class="eyebrow">THE VOICE OF LOVE</p>
+      <h1>
+        好きな一枚を、
+        <br>
+        <em>好きな言葉で。</em>
+      </h1>
+      <p>作品を聴いた気持ちが、次の誰かの「聴いてみたい」につながる。</p>
+      <a class="button button--pink" href="{{ url_for('discography') }}">
+        CDレビューを見る
+        <span>↗</span>
+      </a>
+    </div>
+
+    <div class="scroll-hint" aria-hidden="true">
+      <span></span>
+      SCROLL
+    </div>
+  </section>
+
+  <section class="section section--news">
+    <div class="section-heading reveal">
+      <div>
+        <p class="eyebrow">LATEST INFORMATION</p>
+        <h2>NEWS</h2>
+      </div>
+      <a class="text-link" href="{{ url_for('news') }}">
+        VIEW ALL
+        <span>→</span>
+      </a>
+    </div>
+
+    <div class="news-list">
+      {# トップページに表示するニュースを1件ずつ繰り返す #}
+      {% for date, category, title in news %}
+        <article class="news-row reveal">
+          <time>{{ date }}</time>
+          <span class="news-tag">{{ category }}</span>
+          <h3>{{ title }}</h3>
+          <span class="row-arrow">↗</span>
+        </article>
+      {% endfor %}
+      {# ニュースの繰り返しはここまで #}
+    </div>
+  </section>
+
+  <section class="section section--works">
+    <div class="section-heading section-heading--light reveal">
+      <div>
+        <p class="eyebrow">LISTEN, FEEL, REVIEW</p>
+        <h2>DISCOGRAPHY</h2>
+      </div>
+      <a class="text-link" href="{{ url_for('discography') }}">
+        ALL WORKS
+        <span>→</span>
+      </a>
+    </div>
+
+    <div class="featured-albums">
+      {# 注目作品の数だけ、作品カードを1枚ずつ繰り返す #}
+      {% for album in albums %}
+        <a class="featured-card reveal" href="{{ url_for('album_detail', album_id=album['id']) }}">
+          <div class="album-art">
+            <img src="{{ url_for('static', filename='img/' + album['image']) }}" alt="{{ album['title'] }} {{ album['edition'] }} ジャケット">
+          </div>
+
+          <div class="featured-card__meta">
+            <span>{{ album['release_date'] }}</span>
+            <span>
+              {# 平均評価があるときは点数、ないときはNEWと表示する #}
+              {% if album['average_rating'] %}
+                ★ {{ album['average_rating'] }}
+              {% else %}
+                NEW
+              {% endif %}
+              {# 平均評価の条件分岐はここまで #}
+            </span>
+          </div>
+
+          <h3>{{ album['title'] }}</h3>
+          <p>{{ album['edition'] }}</p>
+        </a>
+      {% endfor %}
+      {# 作品カードの繰り返しはここまで #}
+    </div>
+  </section>
+
+  <section class="special-banner reveal">
+    <img src="{{ url_for('static', filename='img/S__135634946.jpg') }}" alt="＝LOVEのライブステージ">
+    <div>
+      <p class="eyebrow">8TH ANNIVERSARY TOUR</p>
+      <h2>
+        LIVE
+        <br>
+        MEMORIES
+      </h2>
+      <a class="button button--white" href="{{ url_for('special') }}">
+        SCHEDULE
+        <span>→</span>
+      </a>
+    </div>
+  </section>
+{% endblock %}

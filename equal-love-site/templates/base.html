@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="＝LOVEのニュース、作品情報、ファンレビューを楽しめるサイトです。">
+    <title>{% block title %}＝LOVE{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/ロゴ2.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+  </head>
+
+  <body class="{% if show_intro %}has-intro{% endif %}">
+    {# トップページを開いたときだけ、最初のロゴ演出を表示する #}
+    {% if show_intro %}
+      <div class="site-intro" aria-hidden="true">
+        <div class="intro-lines">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="intro-mark">＝LOVE</div>
+        <p>Produced by Rino Sashihara</p>
+      </div>
+    {% endif %}
+
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="wordmark" href="{{ url_for('index') }}" aria-label="＝LOVE ホーム">
+          <span>＝LOVE</span>
+          <small>OFFICIAL FAN REVIEW</small>
+        </a>
+
+        <button class="menu-button" type="button" aria-expanded="false" aria-controls="global-nav">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span class="sr-only">メニューを開く</span>
+        </button>
+
+        <nav class="global-nav" id="global-nav" aria-label="メインナビゲーション">
+          <a href="{{ url_for('index') }}" class="{{ 'is-current' if request.endpoint == 'index' }}">
+            <span>HOME</span>
+            <small>トップ</small>
+          </a>
+          <a href="{{ url_for('news') }}" class="{{ 'is-current' if request.endpoint == 'news' }}">
+            <span>NEWS</span>
+            <small>ニュース</small>
+          </a>
+          <a href="{{ url_for('members') }}" class="{{ 'is-current' if request.endpoint == 'members' }}">
+            <span>MEMBER</span>
+            <small>メンバー</small>
+          </a>
+          <a href="{{ url_for('discography') }}" class="{{ 'is-current' if request.endpoint in ['discography', 'album_detail', 'edit_review'] }}">
+            <span>DISCOGRAPHY</span>
+            <small>作品・レビュー</small>
+          </a>
+          <a href="{{ url_for('special') }}" class="{{ 'is-current' if request.endpoint == 'special' }}">
+            <span>SPECIAL</span>
+            <small>ライブ</small>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    {# 登録・更新・削除の結果メッセージをまとめて表示する #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack" aria-live="polite">
+          {# メッセージの数だけ、通知を1件ずつ繰り返す #}
+          {% for category, message in messages %}
+            <div class="flash flash--{{ category }}">
+              {{ message }}
+              <button type="button" aria-label="閉じる">×</button>
+            </div>
+          {% endfor %}
+          {# 通知の繰り返しはここまで #}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <a class="footer-mark" href="{{ url_for('index') }}">＝LOVE</a>
+      <p>Fan-made review project</p>
+    </footer>
+  </body>
+</html>

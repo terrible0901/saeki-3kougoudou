@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}SPECIAL | ＝LOVE{% endblock %}
+{% block content %}
+  <section class="special-hero">
+    <img src="{{ url_for('static', filename='img/S__135634946.jpg') }}" alt="＝LOVEライブステージ">
+    <div>
+      <p class="eyebrow">8TH ANNIVERSARY</p>
+      <h1>
+        PREMIUM
+        <br>
+        TOUR
+      </h1>
+    </div>
+  </section>
+
+  <section class="section schedule-section">
+    <div class="section-heading reveal">
+      <div>
+        <p class="eyebrow">MEET YOU THERE</p>
+        <h2>SCHEDULE</h2>
+      </div>
+    </div>
+
+    <div class="schedule-list">
+      {# 公演予定の数だけ、日程を1件ずつ繰り返す #}
+      {% for date, city, venue, time in schedule %}
+        <article class="schedule-row reveal">
+          <time>{{ date }}</time>
+          <strong>{{ city }}</strong>
+          <div>
+            <h3>{{ venue }}</h3>
+            <p>{{ time }}</p>
+          </div>
+          <span>LIVE</span>
+        </article>
+      {% endfor %}
+      {# 公演日程の繰り返しはここまで #}
+    </div>
+  </section>
+
+  <section class="goods-section">
+    <div class="section-heading section-heading--light reveal">
+      <div>
+        <p class="eyebrow">TOUR COLLECTION</p>
+        <h2>LIVE GOODS</h2>
+      </div>
+    </div>
+
+    <div class="goods-grid">
+      {# 画像ファイル名を順番に取り出し、グッズ画像を4枚表示する #}
+      {% for image in ['ライブ10.jpg', 'ライブ3.jpg', 'ライブ6.jpg', 'ライブ９.jpg'] %}
+        <button class="goods-card reveal" type="button" data-lightbox-src="{{ url_for('static', filename='img/' + image) }}" aria-label="グッズ画像を拡大">
+          <img src="{{ url_for('static', filename='img/' + image) }}" alt="ライブグッズ {{ loop.index }}" loading="lazy">
+        </button>
+      {% endfor %}
+      {# グッズ画像の繰り返しはここまで #}
+    </div>
+  </section>
+
+  <dialog class="lightbox">
+    <button type="button" aria-label="閉じる">×</button>
+    <img alt="拡大したライブグッズ">
+  </dialog>
+{% endblock %}

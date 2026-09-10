@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}DISCOGRAPHY & REVIEWS | ＝LOVE{% endblock %}
+{% block content %}
+  <header class="page-hero page-hero--pink">
+    <p class="eyebrow">LISTEN, FEEL, REVIEW</p>
+    <h1>DISCOGRAPHY</h1>
+    <p>作品を選んで、みんなの感想を見る・投稿する</p>
+  </header>
+
+  <section class="section page-section">
+    <div class="catalog-intro reveal">
+      <strong>{{ albums|length }}</strong>
+      <span>
+        WORKS
+        <br>
+        IN ARCHIVE
+      </span>
+    </div>
+
+    <div class="album-grid">
+      {# 作品の数だけ、CDカードを1枚ずつ繰り返す #}
+      {% for album in albums %}
+        <a class="album-card reveal" href="{{ url_for('album_detail', album_id=album['id']) }}">
+          <div class="album-card__image">
+            <img src="{{ url_for('static', filename='img/' + album['image']) }}" alt="{{ album['title'] }} {{ album['edition'] }} ジャケット" loading="lazy">
+            <span class="album-card__action">
+              レビューを見る
+              <b>→</b>
+            </span>
+          </div>
+
+          <div class="album-card__top">
+            <time>RELEASE {{ album['release_date'] }}</time>
+            <span>{{ album['category'] }}</span>
+          </div>
+
+          <h2>{{ album['title'] }}</h2>
+          <p>{{ album['edition'] }}</p>
+
+          <div class="rating-summary">
+            {# レビューがある作品と、まだない作品で表示を分ける #}
+            {% if album['average_rating'] %}
+              <span class="stars">★</span>
+              {{ album['average_rating'] }}
+              <small>({{ album['review_count'] }}件)</small>
+            {% else %}
+              <span>最初のレビューを募集中</span>
+            {% endif %}
+            {# 評価表示の条件分岐はここまで #}
+          </div>
+        </a>
+      {% endfor %}
+      {# CDカードの繰り返しはここまで #}
+    </div>
+  </section>
+{% endblock %}

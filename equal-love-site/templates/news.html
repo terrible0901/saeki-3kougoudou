@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}NEWS | ＝LOVE{% endblock %}
+{% block content %}
+  <header class="page-hero">
+    <p class="eyebrow">LATEST INFORMATION</p>
+    <h1>NEWS</h1>
+    <p>最新のお知らせ</p>
+  </header>
+
+  <section class="section page-section">
+    <div class="news-list news-list--full">
+      {# ニュースの数だけ、記事を1件ずつ繰り返す #}
+      {% for date, category, title in news %}
+        <article class="news-row reveal">
+          <time>{{ date }}</time>
+          <span class="news-tag">{{ category }}</span>
+          <h2>{{ title }}</h2>
+          <span class="row-arrow">↗</span>
+        </article>
+      {% endfor %}
+      {# ニュースの繰り返しはここまで #}
+    </div>
+  </section>
+{% endblock %}
