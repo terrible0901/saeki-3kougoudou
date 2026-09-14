@@ -359,9 +359,10 @@ def validate_review(form):
         return None, "感想は10〜800文字で入力してください。"
     return (nickname, rating, review_title, comment), None
 
-
+# レビューをデータベースに追加
 @app.post("/discography/<int:album_id>/reviews")
 def add_review(album_id):
+    # アルバムが正常じゃない場合エラー、中断
     get_album_or_404(album_id)
     values, error = validate_review(request.form)
     if error:
