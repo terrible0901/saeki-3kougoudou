@@ -13,8 +13,7 @@ app.config.update(
     SECRET_KEY=os.environ.get("SECRET_KEY", "equal-love-local-development-key"),
     DATABASE=DATABASE,
 )
-
-
+# データの中身を内包リストで管理
 ALBUMS = [
     (1, "＝LOVE 7th ANNIVERSARY PREMIUM CONCERT", "Type-C", "2025.05.21", "c.png", "LIVE Blu-ray", "7周年コンサートの熱気を収めたType-C。ステージ全体の空気感まで楽しめる映像作品です。"),
     (2, "＝LOVE 7th ANNIVERSARY PREMIUM CONCERT", "Type-B", "2025.05.21", "b.png", "LIVE Blu-ray", "7周年コンサートのType-B。お気に入りのシーンや演出について感想を共有できます。"),
@@ -215,7 +214,7 @@ SAMPLE_REVIEWS = [
     ("sample-18", 12, "レビュー例 18", 4, "推し以外にも目が向く作品", "人数の多いステージでも見どころが整理されていて、それぞれのグループやメンバーの良さを発見できました。休日にゆっくり見返したいです。", "2026-04-16 21:35:00"),
 ]
 
-
+# db接続の関数化
 def get_db():
     if "db" not in g:
         # gに接続を保存すると、同じリクエスト中は一つの接続を使い回せます。
@@ -225,14 +224,15 @@ def get_db():
         g.db.execute("PRAGMA foreign_keys = ON")
     return g.db
 
-
+# エラー受けかな？、あとで読む
+# エラー吐いたらdb閉じてるっぽい
 @app.teardown_appcontext
 def close_db(_error=None):
     database = g.pop("db", None)
     if database is not None:
         database.close()
 
-
+# dbの初期化、起動時にdb中身のチェックと不足分生成
 def init_db():
     database = get_db()
     database.executescript((BASE_DIR / "schema.sql").read_text(encoding="utf-8"))
@@ -274,6 +274,8 @@ def init_db():
     database.execute("PRAGMA optimize")
     database.commit()
 
+# ここからflaskの部分
+# 基本上のdb関数周り読み出してrender-templateに渡してるだけ
 
 @app.route("/")
 def index():
@@ -311,7 +313,7 @@ def discography():
     ).fetchall()
     return render_template("discography.html", albums=albums)
 
-
+# アルバムのデータ読み出し部分、中身なかったら404に飛ばしてる
 def get_album_or_404(album_id):
     album = get_db().execute(
         """
@@ -322,6 +324,7 @@ def get_album_or_404(album_id):
         """,
         (album_id,),
     ).fetchone()
+    # 飛ばす部分
     if album is None:
         abort(404)
     return album
@@ -336,7 +339,7 @@ def album_detail(album_id):
     ).fetchall()
     return render_template("album_detail.html", album=album, reviews=reviews)
 
-
+# レビューのルールチェック、正規化するべきではある
 def validate_review(form):
     nickname = form.get("nickname", "").strip()
     review_title = form.get("review_title", "").strip()
@@ -437,5 +440,4 @@ with app.app_context():
 
 
 if __name__ == "__main__":
-    # ダブルクリック起動では、ファイル監視による二重起動を避けて安定させます。
     app.run(host="127.0.0.1", port=5000, debug=False)
